@@ -1,17 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>TinyApp</title>
-</head>
-<body>
-
-  <%- include('partials/_header') %>
-
-  <main>
-    <% for(element in urls) {%>
-      <li><b>Full URL:</b> <%= urls[element] %> - <b>Short form:</b> <a href=""><%= element%></a></li>
-    <% } %>
-  </main>
-
-</body>
+  <html lang="en">
+  <head>
+    <title>TinyApp</title>
+  </head>
+  <body style="font-size:20px; padding:50px;">
+    <%- include('partials/_header') %>
+    <div>
+      <% for(element in urls) {%>
+        <li><b>Full URL:</b> <%= urls[element] %> - <b>Short form:</b> <a href=""><%= element%></a></li>
+      <% } %>
+    </div>
+  </body>
 </html>
+
