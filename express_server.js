@@ -15,7 +15,7 @@ var urlDatabase = {
 
 function generateRandomString() {
   let result = "";
-  let possibleChars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  let possibleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
   for( let i=0; i < 6; i++ )
       result += possibleChars.charAt(Math.floor(Math.random() * possibleChars.length));
