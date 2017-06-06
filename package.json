@@ -1,0 +1,24 @@
+{
+  "name": "TinyApp",
+  "version": "1.0.0",
+  "description": "##This Node app will allow users to shorten long URLs much like TinyURL.com and bit.ly do.",
+  "main": "express_server.js",
+  "dependencies": {
+    "express": "^4.15.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tahuana/TinyApp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tahuana/TinyApp/issues"
+  },
+  "homepage": "https://github.com/tahuana/TinyApp#readme"
+}
