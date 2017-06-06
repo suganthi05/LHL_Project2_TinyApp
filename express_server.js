@@ -40,33 +40,23 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { shortURL: req.params.id, fullURL: urlDatabase[req.params.id] };
-  res.render("urls_show", templateVars);
+  if (Object.keys(urlDatabase).indexOf(req.params.id) !== -1) {
+    let templateVars = { shortURL: req.params.id, fullURL: urlDatabase[req.params.id] };
+    res.render("urls_show", templateVars);
+  } else {
+    res.end("Sorry... shortURL is not in database.");
+  }
 });
 
 app.get("/u/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
-  console.log(`shortURL ${shortURL}`);
-  console.log(`longURL ${longURL}`);
   res.redirect(longURL);
 });
 
-
-
-
-
-// app.get("/", (req, res) => {
-//   res.end("Hello!");
-// });
-
-// app.get("/urls.json", (req, res) => {
-//   res.json(urlDatabase);
-// });
-
-// app.get("/hello", (req, res) => {
-//   res.end("<html><body>Hello <b>World</b></body></html>\n");
-// });
+app.get("/", (req, res) => {
+  res.end("Please, use one of these options: '/urls/new' to create a new short URL; '/urls' to see the short URLs in our base; '/urls/shorURL' to see the full URL; '/u/shortURL' to redirect to full URL.");
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
