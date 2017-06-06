@@ -13,6 +13,15 @@ var urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+function generateRandomString() {
+  let result = "";
+  let possibleChars = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+  for( let i=0; i < 6; i++ )
+      result += possibleChars.charAt(Math.floor(Math.random() * possibleChars.length));
+
+  return result;
+}
 
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
