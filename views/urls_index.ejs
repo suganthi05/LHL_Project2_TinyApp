@@ -3,13 +3,22 @@
   <head>
     <title>TinyApp</title>
   </head>
-  <body style="font-size:20px; padding:50px;">
+  <body style="font-size:15px; padding:50px;">
     <%- include('partials/_header') %>
-    <ul>
+    <table>
+      <tr>
+        <td><b>Full URL:</b></td>
+        <td><b>Short form:</b></td>
+        <td></td>
+      </tr>
       <% for(element in urls) {%>
-        <li><b>Full URL:</b> <%= urls[element] %> - <b>Short form:</b> <a href=""><%= element%></a></li>
+        <tr>
+          <td><%= urls[element] %></td>
+          <td><a href="/urls/<%= element%>"><%= element%></a></td>
+          <td><form method="POST" action="/urls/<%= element%>/delete"><input type="submit" value="Delete"></form></td>
+        </tr>
       <% } %>
-    </ul>
+    </table>
   </body>
 </html>
 

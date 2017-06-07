@@ -55,7 +55,7 @@ app.get("/urls/:id", (req, res) => {
 
   //look for the id in the array
   if ( keys.indexOf(id) === -1){
-    res.status(404).send('Sorry... shortURL is not in database.');
+    res.status(404).send('Sorry... shortURL was not found in database.');
   } else {
     let templateVars = { shortURL: req.params.id, fullURL: urlDatabase[id] };
     res.render("urls_show", templateVars);
@@ -67,6 +67,18 @@ app.get("/u/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
   res.redirect(longURL);
+});
+
+//Delete a given short URL
+app.post("/urls/:id/delete", (req, res) => {
+  console.log("here!");
+  let id = req.params.id;
+  if ( delete urlDatabase[id] ) {
+    res.redirect("/urls");
+  } else {
+    res.status(404).send('Sorry... shortURL was not found in database.');
+  }
+
 });
 
 //General guide
