@@ -1,5 +1,6 @@
 var express = require("express");
 var app = express();
+
 var PORT = process.env.PORT || 8080; // default port 8080
 
 app.set("view engine", "ejs");
@@ -21,8 +22,9 @@ function generateRandomString() {
   let result = "";
   let possibleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  for( let i=0; i < 6; i++ )
+  for( let i=0; i < 6; i++ ) {
       result += possibleChars.charAt(Math.floor(Math.random() * possibleChars.length));
+  }
 
   return result;
 }
@@ -32,8 +34,7 @@ function generateRandomString() {
 app.get("/urls/new", (req, res) => {
   let templateVars = {
     username: req.cookies["username"]
-    // ... any other vars
-    };
+  };
   res.render("urls_new", templateVars);
 });
 
@@ -41,7 +42,6 @@ app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   let longURL = req.body.longURL;
   urlDatabase[shortURL] = longURL;
-  // res.redirect(`http://localhost:8080/urls/${shortURL}`);
   res.redirect("/urls");
 });
 
@@ -81,12 +81,14 @@ app.get("/urls/:id", (req, res) => {
   }
 });
 
+
 //Redirect to full URL
 app.get("/u/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
   res.redirect(longURL);
 });
+
 
 //Delete a given short URL
 app.post("/urls/:id/delete", (req, res) => {
@@ -97,6 +99,7 @@ app.post("/urls/:id/delete", (req, res) => {
     res.status(404).send('Sorry... shortURL was not found in database.');
   }
 });
+
 
 //Update a given short URL
 app.post("/urls/:id", (req, res) => {
@@ -116,13 +119,19 @@ app.post("/urls/:id", (req, res) => {
     urlDatabase[id] = newLongURL;
     res.redirect("/urls");
   }
-
 });
 
-//Submiting login
+
+//Save the login in cookie
 app.post("/login", (req, res) => {
   let login = req.body.username;
   res.cookie('username', login).redirect("/urls");
+});
+
+
+//Clear the login in cookie
+app.post("/logout", (req, res) => {
+  res.clearCookie('username').redirect("/urls");
 });
 
 
