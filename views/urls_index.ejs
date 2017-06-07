@@ -5,11 +5,11 @@
   </head>
   <body style="font-size:20px; padding:50px;">
     <%- include('partials/_header') %>
-    <div>
+    <ul>
       <% for(element in urls) {%>
         <li><b>Full URL:</b> <%= urls[element] %> - <b>Short form:</b> <a href=""><%= element%></a></li>
       <% } %>
-    </div>
+    </ul>
   </body>
 </html>
 
