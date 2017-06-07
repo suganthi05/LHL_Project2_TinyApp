@@ -71,12 +71,31 @@ app.get("/u/:shortURL", (req, res) => {
 
 //Delete a given short URL
 app.post("/urls/:id/delete", (req, res) => {
-  console.log("here!");
   let id = req.params.id;
   if ( delete urlDatabase[id] ) {
     res.redirect("/urls");
   } else {
     res.status(404).send('Sorry... shortURL was not found in database.');
+  }
+});
+
+//Update a given short URL
+app.post("/urls/:id", (req, res) => {
+  //get an array of keys
+  let keys = Object.keys(urlDatabase);
+
+  //make id = given short RUL
+  let id = req.params.id;
+
+  //get the new long URL from the form
+  let newLongURL = req.body.newLongURL;
+
+  //look for the id in the array
+  if ( keys.indexOf(id) === -1){
+    res.status(404).send('Sorry... shortURL was not found in database.');
+  } else {
+    urlDatabase[id] = newLongURL;
+    res.redirect("/urls");
   }
 
 });
