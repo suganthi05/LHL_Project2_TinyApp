@@ -2,12 +2,17 @@
   <h1>Tiny App</h1>
   <table>
     <tr>
+      <td colspan=2>
+        Hello, <%= username %>!
+      </td>
+    </tr>
+    <tr>
       <td width=100px>
-        Your name:
+        Not you?
       </td>
       <td width=370px>
         <form action="/login" method="POST" style="margin:20px 0px;">
-          <input id="username" type="text" name="username" style="width: 300px">
+          <input id="username" type="text" name="username" style="width: 300px" value="Your name!">
           <input type="submit" value="Submit">
         </form>
       </td>

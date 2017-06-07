@@ -30,7 +30,11 @@ function generateRandomString() {
 
 //Create a new short URL
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = {
+    username: req.cookies["username"]
+    // ... any other vars
+    };
+  res.render("urls_new", templateVars);
 });
 
 app.post("/urls", (req, res) => {
@@ -44,8 +48,15 @@ app.post("/urls", (req, res) => {
 
 //Read list of all short URLs
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = {
+    urls: urlDatabase ,
+    username: req.cookies["username"]
+  };
   res.render("urls_index", templateVars);
+});
+
+app.get("/", (req, res) => {
+  res.redirect("/urls");
 });
 
 
@@ -61,7 +72,11 @@ app.get("/urls/:id", (req, res) => {
   if ( keys.indexOf(id) === -1){
     res.status(404).send('Sorry... shortURL was not found in database.');
   } else {
-    let templateVars = { shortURL: req.params.id, fullURL: urlDatabase[id] };
+    let templateVars = {
+      shortURL: req.params.id,
+      fullURL: urlDatabase[id],
+      username: req.cookies["username"]
+    };
     res.render("urls_show", templateVars);
   }
 });
@@ -104,10 +119,12 @@ app.post("/urls/:id", (req, res) => {
 
 });
 
-//General guide
-app.get("/", (req, res) => {
-  res.redirect("/urls");
+//Submiting login
+app.post("/login", (req, res) => {
+  let login = req.body.username;
+  res.cookie('username', login).redirect("/urls");
 });
+
 
 //Start to listen events
 app.listen(PORT, () => {
