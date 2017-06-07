@@ -34,7 +34,8 @@ app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   let longURL = req.body.longURL;
   urlDatabase[shortURL] = longURL;
-  res.redirect(`http://localhost:8080/urls/${shortURL}`);
+  // res.redirect(`http://localhost:8080/urls/${shortURL}`);
+  res.redirect("/urls");
 });
 
 
@@ -102,7 +103,7 @@ app.post("/urls/:id", (req, res) => {
 
 //General guide
 app.get("/", (req, res) => {
-  res.send("Please, use one of these options: '/urls/new' to create a new short URL; '/urls' to see the short URLs in our base; '/urls/shorURL' to see the full URL; '/u/shortURL' to redirect to full URL.");
+  res.redirect("/urls");
 });
 
 //Start to listen events
