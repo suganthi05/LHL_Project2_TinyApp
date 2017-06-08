@@ -1,17 +1,21 @@
-var express = require("express");
-var app = express();
+const express = require("express");
+const bodyParser = require("body-parser");
+const cookieSession = require('cookie-session');
+const bcrypt = require('bcrypt');
 
-var PORT = process.env.PORT || 8080; // default port 8080
+const app = express();
+
+const PORT = process.env.PORT || 8080; // default port 8080
 
 app.set("view engine", "ejs");
 
-const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
-var cookieParser = require('cookie-parser');
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['encrypted cookies']
+}));
 
-const bcrypt = require('bcrypt');
 
 //databases
 var urlDatabase = {
@@ -30,9 +34,15 @@ const user = {};
 
 //function to generate and return a random string with 6 alphanumeric characters
 function generateRandomString() {
+  //set the variable to return the string as empty
   let result = "";
+
+  //set the string with all possible values in the random string
   let possibleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+  //generate a random number between 0 and the length of possible values
+  //this number will be used as index to get a character in the possible values string
+  //repeat steps 6 times (the length of the random required) and concatenate on result
   for( let i=0; i < 6; i++ ) {
       result += possibleChars.charAt(Math.floor(Math.random() * possibleChars.length));
   }
@@ -64,9 +74,14 @@ function findUser (email) {
 
 //function that returns all URLs of a especific user
 function urlsForUser(id) {
+  //get an array with all urls
   let URLsKeys = Object.keys(urlDatabase);
+
+  //set the object to return the result as empty. this object should have only the URLs added by user (id)
   let userURLs = {};
 
+  //para cada shortURL (= elementos da array), compare the id receiving as argument with id from database
+  //if match, include the data in the object to return
   for(element in URLsKeys) {
     let shortURL = URLsKeys[element];
 
@@ -79,14 +94,18 @@ function urlsForUser(id) {
 
     }
   }
+
+  //return an empty object (if the user haven't created any URL) or an object that have all urls created by user
   return userURLs;
 }
+
 
 //Login
 app.get("/login", (req, res) => {
   //get the user id from cookie. if the user is looged in, we get his/her data from database, otherwise the variable will be undefined
-  let userID = req.cookies["user_id"];
-  let userData = user[userID];
+  // let userID = req.cookies["user_id"];
+    let userID = req.session.user_id;
+    let userData = user[userID];
 
   //create the object to send to page
   let templateVars = {
@@ -109,7 +128,11 @@ app.post("/login", (req, res) => {
   if (userID && (bcrypt.compareSync(userPassword, user[userID].password))) {
 
     //informations are corrected
-    res.cookie('user_id', userID).redirect("/urls");
+    // res.cookie('user_id', userID).redirect("/urls");
+  let userID = findUser(userEmail);
+    req.session.user_id = userID;
+    res.redirect("/urls");
+
 
   } else if ((!userEmail || userEmail === '') || (!userPassword || userPassword === '')) {
 
@@ -126,16 +149,17 @@ app.post("/login", (req, res) => {
 });
 
 
-//Logout
+//Logout and clear cookie
 app.post("/logout", (req, res) => {
-  res.clearCookie('user_id').redirect("/urls");
+  req.session = null;
+  res.redirect("/urls");
 });
 
 
 //Register a new user
 app.get("/register", (req, res) => {
   //get the user id from cookie. if the user is looged in, we get his/her data from database, otherwise the variable will be undefined
-  let userID = req.cookies["user_id"];
+  let userID = req.session.user_id;
   let userData = user[userID];
 
   //create the object to send to page
@@ -173,6 +197,7 @@ app.post("/register", (req, res) => {
     //get a new id for the user
     let id = generateRandomString();
 
+
     //add the new user to database
     user[id] = {
       id: id,
@@ -182,46 +207,65 @@ app.post("/register", (req, res) => {
     };
 
     //save the id in cookie and redirect the user to main page
-    res.cookie('user_id', id).redirect("/urls");
+    req.session.user_id = id;
+    res.redirect("/urls");
+    // res.cookie('user_id', id).redirect("/urls");
   }
 });
 
 
 //Create a new short URL
 app.get("/urls/new", (req, res) => {
-  let userID = req.cookies["user_id"];
+  //get the id from cookie and the data of user
+  let userID = req.session.user_id;
   let userData = user[userID];
-  let templateVars = {
-    user: userData
-  };
+
   if (userData) {
+    //the user is logged in, go to page to create a new short URL
+    let templateVars = {
+      user: userData
+    };
+
     res.render("urls_new", templateVars);
   } else {
+    //the user is not logged in, redirect to login page
     res.redirect("/login");
   }
 });
 
 app.post("/urls", (req, res) => {
+  //get a new random short URL
   let shortURL = generateRandomString();
+
+  //get the data from form and cookie
   let longURL = req.body.longURL;
-  let ID = req.cookies["user_id"];
+  let ID = req.session.user_id;
+
+  //includ the data on database
   urlDatabase[shortURL] = {
     url: longURL,
     userID: ID
   };
+
   res.redirect("/urls");
 });
 
 
 //Read list of all short URLs
 app.get("/urls", (req, res) => {
-  let userID = req.cookies["user_id"];
+  //identify the user logged in
+  let userID = req.session.user_id;
   let userData = user[userID];
+
+  //get a list of all urls created by user
   let userURLs = urlsForUser(userID);
+
+  //set the data to send
   let templateVars = {
     urls: userURLs,
     user: userData
   };
+
   res.render("urls_index", templateVars);
 });
 
@@ -232,10 +276,11 @@ app.get("/", (req, res) => {
 
 //Read a given short URL
 app.get("/urls/:id", (req, res) => {
-  let userID = req.cookies["user_id"];
+  //identify the user logged in
+  let userID = req.session.user_id;
   let userData = user[userID];
 
-  //get an array of keys
+  //get an array of keys of url = all short urls
   let keys = Object.keys(urlDatabase);
 
   //make id = given short URL
@@ -245,7 +290,7 @@ app.get("/urls/:id", (req, res) => {
   if ( keys.indexOf(id) === -1){
     res.status(404).send('Sorry... shortURL was not found in database.');
   } else if (userID !== urlDatabase[id].userID){
-    res.status(401).send('Sorry... this shortURL was created by another person, you cannot edit it.');
+    res.status(401).send('Sorry... you cannot edit a URL created by another person, or you are not logged in.');
   } else {
     let templateVars = {
       shortURL: req.params.id,
@@ -253,8 +298,10 @@ app.get("/urls/:id", (req, res) => {
       user: userData
     };
     if (userData) {
+      //user is logged in
       res.render("urls_show", templateVars);
     } else {
+      //user is not logged in, redirect to login page
       res.redirect("/login");
     }
   }
@@ -263,8 +310,11 @@ app.get("/urls/:id", (req, res) => {
 
 //Redirect to full URL
 app.get("/u/:shortURL", (req, res) => {
+  //get the short url from form
   let shortURL = req.params.shortURL;
+  //get the long url from database
   let longURL = urlDatabase[shortURL].url;
+
   res.redirect(longURL);
 });
 
