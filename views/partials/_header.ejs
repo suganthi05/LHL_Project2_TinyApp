@@ -5,7 +5,7 @@
   <table>
     <tr>
       <% if (user) { %>
-        <td width="420"><h4>Hello, <font color=blue><%= user.name %></font>! Here is your ID: <font color=blue><%= user.id %><font color=blue></h4></td>
+        <td width="420"><h4>Hello, <font color=blue><%= user.name %></font>! Here is your email: <font color=blue><%= user.email %><font color=blue></h4></td>
         <td width="60">
           <form action="/logout" method="POST" style="margin: 20px 0px;">
             <input type="submit" value="Logout">

@@ -104,16 +104,27 @@ function urlsForUser(id) {
 app.get("/login", (req, res) => {
   //get the user id from cookie. if the user is looged in, we get his/her data from database, otherwise the variable will be undefined
   // let userID = req.cookies["user_id"];
-    let userID = req.session.user_id;
-    let userData = user[userID];
+  let userID = req.session.user_id;
+  let userData = user[userID];
 
   //create the object to send to page
   let templateVars = {
     user: userData
   };
 
-  //call the register page, sending the user data or an object with property user undefined
-  res.render("login_user", templateVars);
+  if (userID) {
+    //the user is logged in, redirect to /url
+    res.redirect("/urls");
+  } else {
+    //the user is not logged in, redirect to login page
+    //call the register page, sending the user data or an object with property user undefined
+    res.render("login_user", templateVars);
+  }
+
+});
+
+app.get("/", (req, res) => {
+  res.redirect("/login");
 });
 
 app.post("/login", (req, res) => {
@@ -167,8 +178,13 @@ app.get("/register", (req, res) => {
     user: userData
   };
 
-  //call the register page, sending the user data or an object with property user undefined
-  res.render("register_user", templateVars);
+  if (userID) {
+    //the user is logged in, redirect to /url
+    res.redirect("/urls");
+  } else {
+    //call the register page, sending the user data or an object with property user undefined
+    res.render("register_user", templateVars);
+  }
 });
 
 app.post("/register", (req, res) => {
@@ -267,10 +283,6 @@ app.get("/urls", (req, res) => {
   };
 
   res.render("urls_index", templateVars);
-});
-
-app.get("/", (req, res) => {
-  res.redirect("/urls");
 });
 
 
