@@ -1,27 +1,28 @@
 <header>
-  <div style="margin-left: 200px; margin-top: 20px;">
+  <div style="margin-left: 150px; margin-top: 20px;">
     <h1>Tiny App</h1>
   </div>
   <table>
     <tr>
-      <% if (username) { %>
-        <td width="420"><h4>Hello, <%= username %>!</h4></td>
+      <% if (user) { %>
+        <td width="420"><h4>Hello, <font color=blue><%= user.name %></font>! Here is your ID: <font color=blue><%= user.id %><font color=blue></h4></td>
         <td width="60">
           <form action="/logout" method="POST" style="margin: 20px 0px;">
             <input type="submit" value="Logout">
           </form>
         </td>
       <% } else { %>
-        <td width=100px>Your name:</td>
-        <td width=370px>
-          <form action="/login" method="POST" style="margin: 20px 0px;">
-            <input id="username" type="text" name="username" style="width: 300px">
+        <td width=230px align=center style="padding-bottom: 20px;">
+          <form action="/login" method="GET" style="margin: 10px 0px;">
             <input type="submit" value="Login">
+          </form>
+        </td>
+        <td width=230px align=center style="padding-bottom: 20px;">
+          <form action="/register" method="GET" style="margin: 10px 0px;">
+            <input type="submit" value="Register">
           </form>
         </td>
       <% } %>
     </tr>
   </table>
 </header>
-
-
