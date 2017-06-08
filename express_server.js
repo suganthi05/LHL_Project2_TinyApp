@@ -13,8 +13,14 @@ app.use(cookieParser());
 
 //databases
 var urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    url: "http://www.lighthouselabs.ca",
+    userID: ""
+  },
+  "9sm5xK": {
+    url: "http://www.google.com",
+    userID: ""
+  }
 };
 
 const user = {};
@@ -44,6 +50,26 @@ function findUser (email) {
     }
   }
   return userFound;
+}
+
+//function that returns all URLs of a especific user
+function urlsForUser(id) {
+  let URLsKeys = Object.keys(urlDatabase);
+  let userURLs = {};
+
+  for(element in URLsKeys) {
+    let shortURL = URLsKeys[element];
+
+    if (urlDatabase[shortURL].userID === id){
+
+      userURLs[shortURL] = {
+        url: urlDatabase[shortURL].url,
+        userID: id
+      }
+
+    }
+  }
+  return userURLs;
 }
 
 //Login
@@ -124,13 +150,21 @@ app.get("/urls/new", (req, res) => {
   let templateVars = {
     user: userData
   };
-  res.render("urls_new", templateVars);
+  if (userData) {
+    res.render("urls_new", templateVars);
+  } else {
+    res.redirect("/login");
+  }
 });
 
 app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   let longURL = req.body.longURL;
-  urlDatabase[shortURL] = longURL;
+  let ID = req.cookies["user_id"];
+  urlDatabase[shortURL] = {
+    url: longURL,
+    userID: ID
+  };
   res.redirect("/urls");
 });
 
@@ -139,8 +173,9 @@ app.post("/urls", (req, res) => {
 app.get("/urls", (req, res) => {
   let userID = req.cookies["user_id"];
   let userData = user[userID];
+  let userURLs = urlsForUser(userID);
   let templateVars = {
-    urls: urlDatabase ,
+    urls: userURLs,
     user: userData
   };
   res.render("urls_index", templateVars);
@@ -153,25 +188,31 @@ app.get("/", (req, res) => {
 
 //Read a given short URL
 app.get("/urls/:id", (req, res) => {
+  let userID = req.cookies["user_id"];
+  let userData = user[userID];
+
   //get an array of keys
   let keys = Object.keys(urlDatabase);
 
-  //make id = given short RUL
+  //make id = given short URL
   let id = req.params.id;
 
   //look for the id in the array
   if ( keys.indexOf(id) === -1){
     res.status(404).send('Sorry... shortURL was not found in database.');
+  } else if (userID !== urlDatabase[id].userID){
+    res.status(401).send('Sorry... this shortURL was created by another person, you cannot edit it.');
   } else {
-    let userID = req.cookies["user_id"];
-    let userData = user[userID];
-
     let templateVars = {
       shortURL: req.params.id,
-      fullURL: urlDatabase[id],
+      fullURL: urlDatabase[id].url,
       user: userData
     };
-    res.render("urls_show", templateVars);
+    if (userData) {
+      res.render("urls_show", templateVars);
+    } else {
+      res.redirect("/login");
+    }
   }
 });
 
@@ -179,7 +220,7 @@ app.get("/urls/:id", (req, res) => {
 //Redirect to full URL
 app.get("/u/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
-  let longURL = urlDatabase[shortURL];
+  let longURL = urlDatabase[shortURL].url;
   res.redirect(longURL);
 });
 
@@ -210,7 +251,7 @@ app.post("/urls/:id", (req, res) => {
   if ( keys.indexOf(id) === -1){
     res.status(404).send('Sorry... shortURL was not found in database.');
   } else {
-    urlDatabase[id] = newLongURL;
+    urlDatabase[id].url = newLongURL;
     res.redirect("/urls");
   }
 });
