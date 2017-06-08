@@ -11,6 +11,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
+const bcrypt = require('bcrypt');
+
 //databases
 var urlDatabase = {
   "b2xVn2": {
@@ -40,8 +42,16 @@ function generateRandomString() {
 
 //function that look for a user in database and return your login, if find it
 function findUser (email) {
+  //get an array with all users ids
   let userKeys = Object.keys(user);
+
+  //set the variable to return the result as empty
   let userFound = "";
+
+  //go throw each element the array and use this id (= index of array) to look for user in object (user database)
+  //compare the email from database and email receiving as argument
+  //if match, set the variable with the id found and return
+  //if no match, return empty variable
   for (let userID in userKeys){
     let id = userKeys[userID];
     if (email === user[id].email) {
@@ -74,28 +84,43 @@ function urlsForUser(id) {
 
 //Login
 app.get("/login", (req, res) => {
+  //get the user id from cookie. if the user is looged in, we get his/her data from database, otherwise the variable will be undefined
   let userID = req.cookies["user_id"];
   let userData = user[userID];
+
+  //create the object to send to page
   let templateVars = {
     user: userData
   };
+
+  //call the register page, sending the user data or an object with property user undefined
   res.render("login_user", templateVars);
 });
 
 app.post("/login", (req, res) => {
+  //get the user data from form
   let userEmail = req.body.email;
   let userPassword = req.body.password;
+
+  //get the user id. call a function that receive the email and return the id or empty
   let userID = findUser(userEmail);
 
-  if (userID && (user[userID].password === userPassword)) {
+  //validate data. check if the user exists in database and the password is correct
+  if (userID && (bcrypt.compareSync(userPassword, user[userID].password))) {
+
     //informations are corrected
     res.cookie('user_id', userID).redirect("/urls");
+
   } else if ((!userEmail || userEmail === '') || (!userPassword || userPassword === '')) {
+
     //email is empty or password is empty
     res.status(403).send('We need your e-mail and password!');
+
   } else {
+
     //password is incorrect
     res.status(403).send('Sorry... You are not registered or your e-mail / password is wrong.');
+
   }
 
 });
@@ -109,35 +134,54 @@ app.post("/logout", (req, res) => {
 
 //Register a new user
 app.get("/register", (req, res) => {
+  //get the user id from cookie. if the user is looged in, we get his/her data from database, otherwise the variable will be undefined
   let userID = req.cookies["user_id"];
   let userData = user[userID];
 
+  //create the object to send to page
   let templateVars = {
     user: userData
   };
+
+  //call the register page, sending the user data or an object with property user undefined
   res.render("register_user", templateVars);
 });
 
 app.post("/register", (req, res) => {
+  //get the user data from form
   let name = req.body.name;
   let email = req.body.email;
   let password = req.body.password;
-  let id = generateRandomString();
 
+  //validate the usar data: all data are required (name, email and password), and the email cannot br already registered
   if((!name || name === '') || (!email || email === '') || (!password || password === '')) {
-    //all informations are required
+
+    //one or more information is empty
     res.status(400).send('Sorry... we need your name, email and password.');
+
   } else if (findUser(email)) {
+
     //user is already registered
     res.status(400).send('Sorry... your email is already registered. Try to login!');
+
   } else {
-    //data is ok, user will be included in database
+    //data is ok, user can be included in database
+
+    //hash password
+    let hashed_password = bcrypt.hashSync(password,10);
+
+    //get a new id for the user
+    let id = generateRandomString();
+
+    //add the new user to database
     user[id] = {
       id: id,
       name: name,
       email: email,
-      password: password
+      password: hashed_password
     };
+
+    //save the id in cookie and redirect the user to main page
     res.cookie('user_id', id).redirect("/urls");
   }
 });
