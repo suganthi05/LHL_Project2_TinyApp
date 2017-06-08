@@ -11,10 +11,13 @@ app.use(bodyParser.urlencoded({extended: true}));
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
+//databases
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
+const user = {};
 
 
 //function to generate a random string with 6 alphanumeric characters
@@ -29,6 +32,18 @@ function generateRandomString() {
   return result;
 }
 
+function findUser (email) {
+  let userKeys = Object.keys(user);
+  let userFound = "";
+  for (let userID in userKeys){
+    let id = userKeys[userID];
+    if (email === user[id].email) {
+      userFound = id;
+      return userFound;
+    }
+  }
+  return userFound;
+}
 
 //Create a new short URL
 app.get("/urls/new", (req, res) => {
@@ -48,6 +63,17 @@ app.post("/urls", (req, res) => {
 
 //Read list of all short URLs
 app.get("/urls", (req, res) => {
+  // let userID = req.cookies["user_id"];
+  // console.log(user);
+  // let userData = user.userID;
+  // console.log("ID: ", userID);
+  // console.log("user: ", userData);
+  // let templateVars = {
+  //   urls: urlDatabase ,
+  //   user_id: userID,
+  //   user: userData
+  // };
+  // console.log(templateVars);
   let templateVars = {
     urls: urlDatabase ,
     username: req.cookies["username"]
@@ -132,6 +158,37 @@ app.post("/login", (req, res) => {
 //Clear the login in cookie
 app.post("/logout", (req, res) => {
   res.clearCookie('username').redirect("/urls");
+});
+
+
+//Register an user
+app.get("/register", (req, res) => {
+  let templateVars = {
+    username: req.cookies["username"]
+  };
+  res.render("register_user", templateVars);
+});
+
+app.post("/register", (req, res) => {
+  let name = req.body.name;
+  let email = req.body.email;
+  let password = req.body.password;
+  let id = generateRandomString();
+
+  if(!email || !password) {
+    res.status(400).send('Sorry... we need your email and your password.');
+  } else if (findUser(email)) {
+    res.status(400).send('Sorry... your email is already registered. Try to login!');
+  } else {
+    user[id] = {
+      id: id,
+      name: name,
+      email: email,
+      password: password
+    };
+    // console.log(user);
+    res.cookie('user_id', id).redirect("/urls");
+  }
 });
 
 

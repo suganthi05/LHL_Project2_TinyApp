@@ -3,9 +3,9 @@
   <head>
     <title>TinyApp</title>
   </head>
-  <body style="font-size:15px; padding:20px;">
+  <body style="font-size: 15px; padding: 20px;">
     <%- include('partials/_header') %>
-    <table style="border:1px solid gray;">
+    <table style="border: 1px solid gray;">
       <tr>
         <td width=100px><b>Short URL:</b></td>
         <td width=250px><b>Full form:</b></td>
@@ -20,8 +20,13 @@
         </tr>
       <% } %>
     </table>
-    <div style="margin-left:200px; margin-top:50px;">
-      <a href="/urls/new">New URL</a>
+    <div style="margin-top: 50px;">
+      <table>
+        <tr>
+          <td width="235" align=center><a href="/urls/new">New URL</a></td>
+          <td width="235" align=center><a href="/register">New user</a></td>
+        </tr>
+      </table>
     </div>
   </body>
 </html>

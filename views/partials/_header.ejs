@@ -1,5 +1,5 @@
 <header>
-  <div style="margin-left:200px; margin-top:20px;">
+  <div style="margin-left: 200px; margin-top: 20px;">
     <h1>Tiny App</h1>
   </div>
   <table>
@@ -7,16 +7,16 @@
       <% if (username) { %>
         <td width="420"><h4>Hello, <%= username %>!</h4></td>
         <td width="60">
-          <form action="/logout" method="POST" style="margin:20px 0px;">
+          <form action="/logout" method="POST" style="margin: 20px 0px;">
             <input type="submit" value="Logout">
           </form>
         </td>
       <% } else { %>
         <td width=100px>Your name:</td>
         <td width=370px>
-          <form action="/login" method="POST" style="margin:20px 0px;">
+          <form action="/login" method="POST" style="margin: 20px 0px;">
             <input id="username" type="text" name="username" style="width: 300px">
-            <input type="submit" value="Submit">
+            <input type="submit" value="Login">
           </form>
         </td>
       <% } %>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>TinyApp</title>
+  </head>
+  <body style="font-size: 15px; padding: 20px;">
+    <% include partials/_header %>
+    <div style="margin-left: 10px; margin-top: 10px; border: 1px solid gray; width: 400px">
+      <form action="/register" method="POST" style="margin:10px;">
+        <table>
+          <tr>
+            <td><label for="userRegsitration">Name:</label></td>
+            <td><input id="name" type="text" name="name" style="width: 300px"></td>
+          </tr>
+          <tr>
+            <td><label for="userRegsitration">E-mail:</label></td>
+            <td><input id="email" type="email" name="email" style="width: 300px"></td>
+          </tr>
+          <tr>
+            <td><label for="userRegsitration">Password:</label></td>
+            <td><input id="password" type="password" name="password" style="width: 300px"></td>
+          </tr>
+          <tr>
+            <td colspan=2 align="center" height="35px"><input type="submit" value="Submit"></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+    <div style="margin-left: 10px; margin-top: 50px;">
+      <a href="/urls">Return</a>
+    </div>
+  </body>
+</html>
