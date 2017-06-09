@@ -2,6 +2,15 @@
 <html lang="en">
   <head>
     <title>TinyApp</title>
+    <script>
+      function validateForm() {
+        var url = document.forms["URL"]["longURL"].value;
+        if (!url.includes('http://') && !url.includes('https://')) {
+          alert("Please, include 'http://' or 'https://' on your URL.");
+          return false;
+        }
+      }
+    </script>
   </head>
   <body style="font-size: 15px; padding: 10px;  margin: 0;">
     <main style="height: 500px; max-width: 600px; margin: auto; padding: 20px; border:3px solid grey;" align=center>
@@ -9,7 +18,7 @@
       <table style="margin: auto; border: 1px solid gray;" width= 590px>
         <tr>
           <td width=480px;>
-            <form action="/urls" method="POST" style="margin: 10px;">
+            <form name="URL" action="/urls" method="POST" style="margin: 10px;" onsubmit="return validateForm()">
               <label for="longURL">Enter a URL:</label>
               <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 370px">
               <input type="submit" value="Submit">

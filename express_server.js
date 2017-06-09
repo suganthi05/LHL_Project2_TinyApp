@@ -24,11 +24,17 @@ app.use(methodOverride('_method'));
 var urlDatabase = {
   "b2xVn2": {
     url: "http://www.lighthouselabs.ca",
-    userID: ""
+    userID: "",
+    howManyVisitor: 0,
+    howManyUniqueVisitors: [],
+    track: {}
   },
   "9sm5xK": {
     url: "http://www.google.com",
-    userID: ""
+    userID: "",
+    howManyVisitor: 0,
+    howManyUniqueVisitors: [],
+    track: {}
   }
 };
 
@@ -263,7 +269,10 @@ app.post("/urls", (req, res) => {
   //includ the data on database
   urlDatabase[shortURL] = {
     url: longURL,
-    userID: ID
+    userID: ID,
+    howManyVisitor: 0,
+    howManyUniqueVisitors: [],
+    track: []
   };
 
   res.redirect("/urls");
@@ -310,7 +319,8 @@ app.get("/urls/:id", (req, res) => {
     let templateVars = {
       shortURL: req.params.id,
       fullURL: urlDatabase[id].url,
-      user: userData
+      user: userData,
+      tracking: urlDatabase[id]
     };
     if (userData) {
       //user is logged in
@@ -329,6 +339,21 @@ app.get("/u/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   //get the long url from database
   let longURL = urlDatabase[shortURL].url;
+
+  //identify the user logged in
+  let userID = req.session.user_id;
+
+  //increment the total visitors of short URL
+  urlDatabase[shortURL].howManyVisitor ++;
+
+  //if the user have not accessed the short URL before, include he/she in array of unique users
+  if (!urlDatabase[shortURL].howManyUniqueVisitors.includes(userID)) {
+    urlDatabase[shortURL].howManyUniqueVisitors.push(userID);
+  }
+
+  //include the timestamp and user id on database
+  let timestamp = new Date();
+  urlDatabase[shortURL].track.push([timestamp,userID]);
 
   res.redirect(longURL);
 });
