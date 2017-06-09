@@ -5,7 +5,7 @@
   </head>
   <body style="font-size: 15px; padding: 20px;">
     <%- include('partials/_header') %>
-    <table style="border: 1px solid gray;">
+    <table style="border: 1px solid gray; width: 550px">
       <tr>
         <td width=100px><b>Short URL:</b></td>
         <td width=380px><b>Full form:</b></td>
@@ -14,7 +14,7 @@
         <td><%= shortURL %></td>
         <td>
           <form action="/urls/<%= shortURL%>" method="POST">
-            <input id="longURL" type="text" name="newLongURL" style="width: 300px" value="<%= fullURL %>">
+            <input id="longURL" type="text" name="newLongURL" style="width: 350px" value="<%= fullURL %>">
             <input type="submit" value="Update">
           </form>
         </td>
