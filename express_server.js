@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const methodOverride = require('method-override');
 
 const app = express();
 
@@ -15,6 +16,8 @@ app.use(cookieSession({
   name: 'session',
   keys: ['encrypted cookies']
 }));
+
+app.use(methodOverride('_method'));
 
 
 //databases
@@ -332,7 +335,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 
 //Delete a given short URL
-app.post("/urls/:id/delete", (req, res) => {
+app.delete("/urls/:id", (req, res) => {
   let id = req.params.id;
   if ( delete urlDatabase[id] ) {
     res.redirect("/urls");
@@ -343,7 +346,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
 
 //Update a given short URL
-app.post("/urls/:id", (req, res) => {
+app.put("/urls/:id", (req, res) => {
   //get an array of keys
   let keys = Object.keys(urlDatabase);
 

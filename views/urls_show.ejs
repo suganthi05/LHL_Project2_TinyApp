@@ -14,7 +14,7 @@
         <tr>
           <td><%= shortURL %></td>
           <td>
-            <form action="/urls/<%= shortURL%>" method="POST">
+            <form method="POST" action="/urls/<%= shortURL%>?_method=PUT">
               <input id="longURL" type="text" name="newLongURL" style="width: 350px" value="<%= fullURL %>">
               <input type="submit" value="Update">
             </form>
