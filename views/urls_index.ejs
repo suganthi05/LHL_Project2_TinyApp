@@ -3,38 +3,39 @@
   <head>
     <title>TinyApp</title>
   </head>
-  <body style="font-size: 15px; padding: 20px;">
-    <%- include('partials/_header') %>
-
-    <% if (user) { %>
-    <table style="border: 1px solid gray; width: 550px"">
-      <tr>
-        <td width=100px><b>Short URL:</b></td>
-        <td width=300px><b>Full form:</b></td>
-        <td colspan=2 width=120px></td>
-      </tr>
-      <% if (Object.keys(urls).length === 0) { %>
+  <body style="font-size: 15px; padding: 10px;  margin: 0;">
+    <main style="height: 500px; max-width: 600px; margin: auto; padding: 20px; border:3px solid grey; overflow: scroll;" align=center>
+      <%- include('partials/_header') %>
+      <% if (user) { %>
+      <table style="margin: auto; border: 1px solid gray;" width= 590px>
         <tr>
-          <td colspan=4 align=center height="50px">You've not create any shortened URL yet.</td>
+          <td width=100px><b>Short URL:</b></td>
+          <td width=300px><b>Full form:</b></td>
+          <td colspan=2 width=120px></td>
         </tr>
-      <% } else { %>
-        <% for(element in urls) { %>
+        <% if (Object.keys(urls).length === 0) { %>
           <tr>
-            <td><%= element %></td>
-            <td><a href="/u/<%= element %>"><%= urls[element].url %></a></td>
-              <td><a href="/urls/<%= element %>">Edit</a></td>
-              <td><form method="POST" action="/urls/<%= element %>/delete"><input type="submit" value="Delete"></form></td>
+            <td colspan=4 align=center height="50px">You've not create any shortened URL yet.</td>
           </tr>
+        <% } else { %>
+          <% for(element in urls) { %>
+            <tr>
+              <td><%= element %></td>
+              <td><a href="/u/<%= element %>"><%= urls[element].url %></a></td>
+                <td><a href="/urls/<%= element %>">Edit</a></td>
+                <td><form method="POST" action="/urls/<%= element %>/delete"><input type="submit" value="Delete"></form></td>
+            </tr>
+          <% } %>
         <% } %>
+      </table>
       <% } %>
-    </table>
-    <% } %>
-    <div style="margin-top: 50px; margin-left: 70px;">
-      <% if (!user) { %>
-        <p>To create, edit or delete a short URL, you must be logged in. <br>You can edit or delete your own short URL.</p>
-      <% } else { %>
-        <p style="margin-left: 150px;""><a href="/urls/new">New URL</a></p>
-      <% } %>
-    </div>
+      <div style="margin: auto; padding-top: 50px;">
+        <% if (!user) { %>
+          <p><b>To create, edit or delete a short URL, you must be logged in. <br>You can edit or delete your own short URL.</b></p>
+        <% } else { %>
+          <p style="margin: auto;"><a href="/urls/new">New URL</a></p>
+        <% } %>
+      </div>
+    </main>
   </body>
 </html>

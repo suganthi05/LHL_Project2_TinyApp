@@ -3,21 +3,23 @@
   <head>
     <title>TinyApp</title>
   </head>
-  <body style="font-size: 15px; padding: 20px;">
-    <% include partials/_header %>
-    <table style="border: 1px solid gray; width: 550px">
-      <tr>
-        <td width=480px;>
-          <form action="/urls" method="POST" style="margin: 10px;">
-            <label for="longURL">Enter a URL:</label>
-            <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 370px">
-            <input type="submit" value="Submit">
-          </form>
-        </td>
-      </tr>
-    </table>
-    <div style="margin-left: 10px; margin-top: 50px;">
-      <a href="/urls">Return</a>
-    </div>
+  <body style="font-size: 15px; padding: 10px;  margin: 0;">
+    <main style="height: 500px; max-width: 600px; margin: auto; padding: 20px; border:3px solid grey;" align=center>
+      <% include partials/_header %>
+      <table style="margin: auto; border: 1px solid gray;" width= 590px>
+        <tr>
+          <td width=480px;>
+            <form action="/urls" method="POST" style="margin: 10px;">
+              <label for="longURL">Enter a URL:</label>
+              <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 370px">
+              <input type="submit" value="Submit">
+            </form>
+          </td>
+        </tr>
+      </table>
+      <div style="margin-left: 10px; margin-top: 50px;" align=left>
+        <a href="/urls">Return</a>
+      </div>
+    </main>
   </body>
 </html>
