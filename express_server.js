@@ -341,7 +341,7 @@ app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[shortURL].url;
 
   //identify the user logged in
-  let userID = req.session.user_id;
+  let userID = (req.session.user_id) ? req.session.user_id : "User unknown";
 
   //increment the total visitors of short URL
   urlDatabase[shortURL].howManyVisitor ++;
